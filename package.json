@@ -1,5 +1,5 @@
 {
-  "name": "signaling",
+  "name": "rkv-signaling",
   "version": "0.0.1",
   "private": true,
   "main": "index.js",
@@ -9,5 +9,19 @@
   "dependencies": {
     "protobufjs": "^6.8.8",
     "ramda": "^0.26.1"
-  }
+  },
+  "description": "WebRTC signaling util for many-to-one communication",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rymdkraftverk/rkv-signaling.git"
+  },
+  "keywords": [
+    "webrtc"
+  ],
+  "author": "rymdkraftverk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rymdkraftverk/rkv-signaling/issues"
+  },
+  "homepage": "https://github.com/rymdkraftverk/rkv-signaling#readme"
 }
