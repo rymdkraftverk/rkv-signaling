@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint src"
   },
   "dependencies": {
     "protobufjs": "^6.8.8",
