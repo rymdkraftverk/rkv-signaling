@@ -6,7 +6,7 @@ global.console = {
   warn:  jest.fn(),
 }
 
-const common = require('../common')
+const common = require('../src/common')
 
 test('hoistInternal', () => {
   const channels = [
