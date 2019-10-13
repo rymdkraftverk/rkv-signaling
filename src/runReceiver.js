@@ -1,10 +1,7 @@
 const R = require('ramda')
 const Event = require('./event')
 const {
-  HEARTBEAT_INTERVAL,
-  ReadyState,
   WEB_RTC_CONFIG,
-  hoistInternal,
   makeCloseConnections,
   makeOnRtcMessage,
   mappify,
@@ -12,11 +9,10 @@ const {
   packageChannels,
   prettyId,
   rtcMapSend,
-  rtcSend,
   wsSend,
 } = require('./common')
 
-const { log, warn } = console
+const { log } = console
 
 const InitatorState = {
   NEW:   'new',
@@ -75,40 +71,12 @@ const killInitiator = (id) => {
   removeInitiator(id)
 }
 
-const isOpen = R.pipe(
-  R.view(R.lensPath(['internalChannel', 'readyState'])),
-  R.equals(ReadyState.OPEN),
-)
-
-const beatHeart = () => {
-  // Fetch fresh initiators
-  initiators
-    .filter(R.propEq('state', InitatorState.READY))
-    .forEach((initiator) => {
-      if (initiator.alive && isOpen(initiator)) {
-        rtcSend(
-          JSON.stringify,
-          initiator.internalChannel,
-          { event: Event.HEARTBEAT },
-        )
-        initiator.alive = false
-        return
-      }
-      log(`[Beat heart leave] ${prettyId(initiator.id)}`, {
-        readyState: initiator.internalChannel.readyState,
-        alive:      initiator.alive,
-      })
-      killInitiator(initiator.id)
-    })
-}
-
-const onInternalData = ({ event, payload: initiatorId }) => {
-  if (event !== Event.HEARTBEAT) {
-    warn(`Unhandled internal event ${event}`)
-    return
+const oniceconnectionstatechange = initiatorId => (event) => {
+  const state = event.currentTarget.iceConnectionState
+  console.log('oniceconnectionstatechange', state)
+  if (state === 'disconnected') {
+    killInitiator(initiatorId)
   }
-
-  getInitiator(initiatorId).alive = true
 }
 
 const onIceCandidate = initiator => ({ candidate }) => {
@@ -171,13 +139,6 @@ const makeSetOnData = channels => (onData) => {
   })
 }
 
-const plumbInternalChannel = ({ channel, initiator }) => {
-  initiator.internalChannel = channel
-  channel.onmessage = makeOnRtcMessage({
-    onData: onInternalData,
-  })
-}
-
 const outputExternalChannels = ({ channels, initiator, rtc }) => {
   const channelMap = mappify('name', channels)
 
@@ -199,6 +160,9 @@ const onOffer = ({ initiatorId, channelInfos, offer }) => {
   // Start collecting receiver candidates to be sent to this initiator
   rtc.onicecandidate = onIceCandidate(initiator)
 
+  // Monitor disconnects
+  rtc.oniceconnectionstatechange = oniceconnectionstatechange(initiatorId)
+
   // Wait for all known channels to be opened before considering initiator
   // to have joined
   const channelNames = R.pluck('name', channelInfos)
@@ -206,15 +170,8 @@ const onOffer = ({ initiatorId, channelInfos, offer }) => {
     .then((channels) => {
       initiator.state = InitatorState.READY
 
-      const [internal, externals] = hoistInternal(channels)
-
-      plumbInternalChannel({
-        channel: internal,
-        initiator,
-      })
-
       outputExternalChannels({
-        channels: packageChannels(channelInfos, externals),
+        channels: packageChannels(channelInfos, channels),
         initiator,
         rtc,
       })
@@ -229,6 +186,7 @@ const init = ({
   onInitiatorJoin,
   onInitiatorLeave,
 }) => {
+  console.log('receive 1')
   outputEvents.onInitiatorJoin = onInitiatorJoin
   outputEvents.onInitiatorLeave = onInitiatorLeave
 
@@ -243,8 +201,6 @@ const init = ({
       [Event.CLIENT_ID]: R.pipe(prettyId, R.concat('[Id] '), log),
     }),
   )
-
-  setInterval(beatHeart, HEARTBEAT_INTERVAL)
 }
 
 module.exports = init

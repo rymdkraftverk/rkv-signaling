@@ -1,10 +1,8 @@
 const R = require('ramda')
 const Event = require('./event')
 const {
-  HEARTBEAT_INTERVAL,
   INTERNAL_CHANNEL,
   WEB_RTC_CONFIG,
-  hoistInternal,
   makeCloseConnections,
   makeOnRtcMessage,
   mappify,
@@ -12,46 +10,16 @@ const {
   packageChannels,
   prettyId,
   rtcMapSend,
-  rtcSend,
   warnNotFound,
   wsSend,
 } = require('./common')
-
-const HEARTBEAT_PADDING = HEARTBEAT_INTERVAL / 2 // network delays and whatnot
-const HEARTBEAT_PATIENCE = HEARTBEAT_INTERVAL + HEARTBEAT_PADDING
 
 const { error, log, warn } = console
 
 // state
 let closeConnections = null
-let internalChannel
 let id = null
-let killTimer = null
 // end state
-
-const deferDeath = () => {
-  clearTimeout(killTimer)
-
-  killTimer = setTimeout(
-    closeConnections,
-    HEARTBEAT_PATIENCE,
-  )
-}
-
-const onInternalData = ({ event }) => {
-  if (event !== Event.HEARTBEAT) {
-    warn(`Unhandled internal event ${event}`)
-    return
-  }
-
-  deferDeath()
-
-  rtcSend(
-    JSON.stringify,
-    internalChannel,
-    { event: Event.HEARTBEAT, payload: id },
-  )
-}
 
 const sendOffer = ({
   channelInfos,
@@ -155,6 +123,7 @@ const init = ({
   receiverId,
   wsAddress,
 }) => new Promise((resolve, reject) => {
+  gonsole.log('init 2')
   const rtc = new RTCPeerConnection(WEB_RTC_CONFIG)
   const ws = new WebSocket(wsAddress)
 
@@ -202,13 +171,7 @@ const init = ({
     .then(R.pipe(
       R.tap(() => {
         ws.close() // No longer needed after signaling
-        deferDeath()
       }),
-      hoistInternal,
-      ([internal, externals]) => {
-        internalChannel = internal
-        return externals
-      },
       packageChannels(channelInfos),
       mappify('name'),
       rtcMapSend,
