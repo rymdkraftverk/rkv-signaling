@@ -4,7 +4,6 @@ const Event = {
   OFFER:            'receiver.join.offer',
   NOT_FOUND:        'receiver.join.initiator.notfound',
   CLIENT_ID:        'client.id',
-  HEARTBEAT:        'heartbeat',
 }
 
 module.exports = Event

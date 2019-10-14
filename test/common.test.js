@@ -8,43 +8,6 @@ global.console = {
 
 const common = require('../src/common')
 
-test('hoistInternal', () => {
-  const channels = [
-    {
-      label: 'someotherchannel',
-      name:  'bar',
-    },
-    {
-      label: common.INTERNAL_CHANNEL.name,
-      name:  'foo',
-    },
-    {
-      label: 'somethirdchannel',
-      name:  'baz',
-    },
-  ]
-
-  const hoistedChannelAndRest = [
-    {
-      label: common.INTERNAL_CHANNEL.name,
-      name:  'foo',
-    },
-    [
-      {
-        label: 'someotherchannel',
-        name:  'bar',
-      },
-      {
-        label: 'somethirdchannel',
-        name:  'baz',
-      },
-    ],
-  ]
-
-  expect(common.hoistInternal(channels))
-    .toEqual(hoistedChannelAndRest)
-})
-
 test('makeCloseConnections', () => {
   const connections = [
     { close: jest.fn() },

@@ -15,16 +15,6 @@ const WEB_RTC_CONFIG = {
   ],
 }
 
-// reliable
-const INTERNAL_CHANNEL = {
-  name:   'internal',
-  config: {
-    ordered: true,
-  },
-}
-
-const HEARTBEAT_INTERVAL = 5000
-
 const innerJoinWith = R.curry((join, pred, t1, t2) => R.chain(
   x => R.pipe(
     R.filter(pred(x)),
@@ -121,12 +111,6 @@ const onWsMessage = eventMap => (message) => {
   f(payload)
 }
 
-const hoistInternal = R.pipe(
-  R.partition(R.propEq('label', INTERNAL_CHANNEL.name)),
-  ([internals, externals]) => [R.head(internals), externals],
-)
-
-
 const mappify = R.curry((key, list) => R.indexBy(R.prop(key), list))
 
 const packageChannels = innerJoinWith(
@@ -147,11 +131,8 @@ const makeOnRtcMessage = ({ protobuf, onData }) => R.pipe(
 )
 
 module.exports = {
-  HEARTBEAT_INTERVAL,
-  INTERNAL_CHANNEL,
   ReadyState,
   WEB_RTC_CONFIG,
-  hoistInternal,
   makeCloseConnections,
   makeOnRtcMessage,
   mappify,
