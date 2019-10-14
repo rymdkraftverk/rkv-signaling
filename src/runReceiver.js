@@ -113,7 +113,7 @@ const onInternalData = ({ event, payload: initiatorId }) => {
 
 const onIceCandidate = initiator => ({ candidate }) => {
   if (candidate) {
-    log(`[Ice Candidate] ${prettyId(initiator.id)}`)
+    log(`[Ice candidate] ${prettyId(initiator.id)}`)
     return
   }
 
@@ -155,7 +155,7 @@ const setUpChannels = (rtc, channelNames, initiator) => {
       }
 
       channel.onclose = () => {
-        log(`[Channel closed] ${prettyId(initiator.id)}`)
+        log(`[Channel closed] ${prettyId(initiator.id)} ${channel.label}`)
         killInitiator(initiator.id)
       }
     }
