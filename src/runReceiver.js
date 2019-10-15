@@ -124,7 +124,6 @@ const setUpChannels = (rtc, channelNames, initiator) => {
 
       channel.onclose = () => {
         log(`[Channel closed] ${prettyId(initiator.id)} ${channel.label}`)
-        killInitiator(initiator.id)
       }
     }
   })
