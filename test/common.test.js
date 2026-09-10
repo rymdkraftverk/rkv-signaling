@@ -2,19 +2,19 @@
 /* eslint-disable no-console */
 global.console = {
   ...console,
-  error: jest.fn(),
-  log:   jest.fn(),
-  warn:  jest.fn(),
+  error: vi.fn(),
+  log:   vi.fn(),
+  warn:  vi.fn(),
 }
 
 const common = require('../src/common')
 
 test('makeCloseConnections', () => {
   const connections = [
-    { close: jest.fn() },
-    { close: jest.fn() },
-    { close: jest.fn() },
-    { close: jest.fn() },
+    { close: vi.fn() },
+    { close: vi.fn() },
+    { close: vi.fn() },
+    { close: vi.fn() },
   ]
 
   common.makeCloseConnections(connections)()
@@ -76,8 +76,8 @@ test('mappify', () => {
 })
 
 test('onWsMessage', () => {
-  const f = jest.fn()
-  const g = jest.fn()
+  const f = vi.fn()
+  const g = vi.fn()
 
   const eventMap = { f, g }
   const message = '{ "event": "f","payload": 2 }'
@@ -140,8 +140,8 @@ test('prettyId', () => {
 
 // Without protobuf
 test('rtcMapSend', () => {
-  const f = jest.fn()
-  const g = jest.fn()
+  const f = vi.fn()
+  const g = vi.fn()
 
   const channelMap = {
     foo: {
@@ -174,7 +174,7 @@ test('rtcMapSend', () => {
 
 test('rtcSend', () => {
   const channel = {
-    send: jest.fn(),
+    send: vi.fn(),
   }
   const data = { foo: 'bar' }
   const serializedData = '{"foo":"bar"}'
@@ -196,7 +196,7 @@ test('warnNotFound', () => {
 })
 
 test('wsSend', () => {
-  const f = jest.fn()
+  const f = vi.fn()
 
   const ws = {
     send: f,

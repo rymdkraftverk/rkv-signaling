@@ -192,7 +192,9 @@ const init = ({
 
   const ws = new WebSocket(wsAddress)
   send = wsSend(ws)
-  ws.onopen = () => { send(Event.RECEIVER_UPGRADE, receiverId) }
+  ws.onopen = () => {
+    send(Event.RECEIVER_UPGRADE, receiverId)
+  }
 
   ws.onmessage = R.pipe(
     R.prop('data'),

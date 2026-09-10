@@ -44,7 +44,6 @@ const prettyId = id => id.substring(0, 4)
 const defaultSerialize = JSON.stringify
 const defaultDeserialize = JSON.parse
 
-// eslint-disable-next-line fp/no-rest-parameters
 const multiArgsString = (...args) => R.toString(args)
 
 const protobufSchema = R.memoizeWith(
