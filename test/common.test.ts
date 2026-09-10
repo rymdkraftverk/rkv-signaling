@@ -1,13 +1,14 @@
-// Mute logging
-/* eslint-disable no-console */
-global.console = {
-  ...console,
-  error: vi.fn(),
-  log:   vi.fn(),
-  warn:  vi.fn(),
-}
+import * as common from '../src/common'
 
-const common = require('../src/common')
+// Mute logging
+beforeEach(() => {
+  vi.spyOn(console, 'error')
+.mockImplementation(() => {})
+  vi.spyOn(console, 'log')
+.mockImplementation(() => {})
+  vi.spyOn(console, 'warn')
+.mockImplementation(() => {})
+})
 
 test('makeCloseConnections', () => {
   const connections = [
@@ -27,7 +28,7 @@ test('makeCloseConnections', () => {
 // Without protobuf
 test('makeOnRtcMessage', () => {
   const options = {
-    onData: ({ foo }) => foo * 3,
+    onData: ({ foo }: { foo: number }) => foo * 3,
   }
   const message = {
     data: '{ "foo": 2 }',
@@ -128,7 +129,7 @@ test('packageChannels', () => {
 
   expect(common.packageChannels(
     channelInfos,
-    channels,
+    channels as unknown as RTCDataChannel[],
   ))
     .toEqual(packagedChannels)
 })
@@ -160,8 +161,7 @@ test('rtcMapSend', () => {
   const channelName = 'bar'
   const data = { foo: 2 }
 
-  common.rtcMapSend(
-    channelMap,
+  common.rtcMapSend(channelMap as unknown as common.ChannelMap)(
     channelName,
     data,
   )
@@ -181,7 +181,7 @@ test('rtcSend', () => {
 
   common.rtcSend(
     JSON.stringify,
-    channel,
+    channel as unknown as RTCDataChannel,
     data,
   )
 
@@ -190,7 +190,7 @@ test('rtcSend', () => {
 })
 
 test('warnNotFound', () => {
-  common.warnNotFound('foo')(4321)
+  common.warnNotFound('foo')('4321')
   expect(console.warn)
     .toHaveBeenCalledWith('[Foo not found] 4321')
 })
@@ -204,8 +204,7 @@ test('wsSend', () => {
   const event = 'foo'
   const payload = 'bar'
 
-  common.wsSend(
-    ws,
+  common.wsSend(ws as unknown as WebSocket)(
     event,
     payload,
   )
@@ -214,4 +213,3 @@ test('wsSend', () => {
     .toHaveBeenCalledWith('{"event":"foo","payload":"bar"}')
 })
 
-/* eslint-enable no-console */

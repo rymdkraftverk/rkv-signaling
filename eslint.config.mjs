@@ -1,18 +1,20 @@
 import globals from 'globals'
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs'
 import { configs, plugins } from 'eslint-config-airbnb-extended'
+import tseslint from 'typescript-eslint'
 
 export default [
   { ignores: ['dist/'] },
   plugins.stylistic,
   plugins.importX,
-  ...configs.base.recommended,
+  ...configs.base.typescript,
+  ...tseslint.configs.recommended,
   comments.recommended,
   {
     name:            'rkv-signaling/language',
     languageOptions: {
       ecmaVersion:   'latest',
-      sourceType:    'commonjs',
+      sourceType:    'module',
       parserOptions: { ecmaVersion: 'latest' },
       globals:       { ...globals.browser, ...globals.node },
     },
@@ -38,13 +40,8 @@ export default [
     },
   },
   {
-    name:            'rkv-signaling/config',
-    files:           ['*.mjs'],
-    languageOptions: { sourceType: 'module' },
-  },
-  {
     name:            'rkv-signaling/tests',
-    files:           ['test/**/*.js'],
+    files:           ['test/**/*.ts'],
     languageOptions: { globals: globals.vitest },
     rules:           {
       '@stylistic/max-len':                  'off',

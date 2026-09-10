@@ -1,17 +1,16 @@
 {
   "name": "rkv-signaling",
   "version": "0.0.5",
-  "main": "dist",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "babel src -d dist",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json",
     "qa": "npm test && npm run lint && npm run typecheck"
   },
   "dependencies": {
-    "protobufjs": "^6.8.8",
-    "ramda": "^0.26.1"
+    "protobufjs": "^6.8.8"
   },
   "description": "WebRTC signaling util for many-to-one communication",
   "repository": {
@@ -28,16 +27,15 @@
   },
   "homepage": "https://github.com/rymdkraftverk/rkv-signaling#readme",
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.8.0",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "babel-preset-minify": "^0.5.0",
+    "@types/node": "^22.20.2",
     "eslint": "^9.39.0",
     "eslint-config-airbnb-extended": "^3.2.0",
     "globals": "^16.5.0",
     "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.0",
     "vitest": "^3.2.4"
-  }
+  },
+  "types": "dist/index.d.ts"
 }

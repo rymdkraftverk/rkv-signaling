@@ -4,6 +4,6 @@ const Event = {
   OFFER:            'receiver.join.offer',
   NOT_FOUND:        'receiver.join.initiator.notfound',
   CLIENT_ID:        'client.id',
-}
+} as const
 
-module.exports = Event
+export default Event
