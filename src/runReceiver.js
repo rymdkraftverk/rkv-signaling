@@ -23,8 +23,10 @@ const InitatorState = {
 let send = null
 
 const outputEvents = {
-  onInitiatorJoin:  null,
-  onInitiatorLeave: null,
+  /** @type {(initiator: object) => void} */
+  onInitiatorJoin:  () => {},
+  /** @type {(id: string) => void} */
+  onInitiatorLeave: () => {},
 }
 
 let initiators = []

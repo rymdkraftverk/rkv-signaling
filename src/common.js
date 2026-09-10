@@ -124,6 +124,7 @@ const makeCloseConnections = connections => () => {
   })
 }
 
+/** @param {{ protobuf?: object, onData: (data: object) => unknown }} options */
 const makeOnRtcMessage = ({ protobuf, onData }) => R.pipe(
   R.prop('data'),
   getDeserializer(protobuf),
