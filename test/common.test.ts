@@ -204,7 +204,7 @@ test('wsSend', () => {
   const event = 'foo'
   const payload = 'bar'
 
-  common.wsSend(ws as unknown as WebSocket)(
+  common.wsSend(ws)(
     event,
     payload,
   )
