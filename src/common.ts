@@ -82,7 +82,7 @@ const getDeserializer = (protobuf?: Protobuf): Deserializer => (
 
 export type WsSend = (event: string, payload: unknown) => void
 
-export const wsSend = (ws: WebSocket): WsSend => (event, payload) => {
+export const wsSend = (ws: { send: (data: string) => void }): WsSend => (event, payload) => {
   ws.send(defaultSerialize({ event, payload }))
 }
 
