@@ -1,4 +1,6 @@
-import { useEffect, type ComponentType, type ReactNode } from 'react'
+import {
+  useEffect, useEffectEvent, type ComponentType, type ReactNode,
+} from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
 export const FullHeight = styled.div`
@@ -66,12 +68,14 @@ export const Toast = ({ onHide, text, type }: {
   text:   string;
   type:   keyof typeof toastBackground;
 }) => {
+  const hide = useEffectEvent(onHide)
+
   useEffect(() => {
-    const timer = setTimeout(onHide, TOAST_VISIBLE_MILLISECONDS)
+    const timer = setTimeout(hide, TOAST_VISIBLE_MILLISECONDS)
     return () => {
       clearTimeout(timer)
     }
-  }, [onHide])
+  }, [])
 
   return <Banner style={{ background: toastBackground[type] }}>{text}</Banner>
 }
