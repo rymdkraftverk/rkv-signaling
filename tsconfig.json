@@ -8,7 +8,15 @@
     "noImplicitAny": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "types": ["vitest/globals", "node"]
+    "types": [
+      "vitest/globals",
+      "node"
+    ],
+    "jsx": "react-jsx"
   },
-  "include": ["src", "test", "*.mjs"]
+  "include": [
+    "src",
+    "test",
+    "*.mjs"
+  ]
 }

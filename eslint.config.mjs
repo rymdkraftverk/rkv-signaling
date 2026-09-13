@@ -15,7 +15,7 @@ export default [
     languageOptions: {
       ecmaVersion:   'latest',
       sourceType:    'module',
-      parserOptions: { ecmaVersion: 'latest' },
+      parserOptions: { ecmaVersion: 'latest', ecmaFeatures: { jsx: true } },
       globals:       { ...globals.browser, ...globals.node },
     },
   },

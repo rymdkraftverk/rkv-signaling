@@ -34,6 +34,12 @@ when the url carries one, keeps `status` at `lobby`, `connecting` or
 code is unknown, and hands back `send(channel, data)` once the channels are
 open. `fail(message)` lets the game raise its own errors, such as a full game.
 
+The screens around that flow live in `rkv-signaling/screens`, built on
+styled-components: `LockerRoom` (code entry, takes a `logo` and a `button`
+styled with `joinButtonStyle`), `LockerRoomLoader`, `TurnPhone` (takes the
+`gif` and `sound` paths), `Toast`, and the `FullHeight`, `ScrollLock` and
+`IOSDisableDoubleTap` helpers every phone screen wraps itself in.
+
 ### Index
 
   - Getting started

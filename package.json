@@ -11,6 +11,10 @@
     "./react": {
       "types": "./dist/react.d.ts",
       "default": "./dist/react.js"
+    },
+    "./screens": {
+      "types": "./dist/screens.d.ts",
+      "default": "./dist/screens.js"
     }
   },
   "files": [
@@ -28,10 +32,14 @@
     "protobufjs": "^8.8.0"
   },
   "peerDependencies": {
-    "react": "^19.2.0"
+    "react": "^19.2.0",
+    "styled-components": "^6.0.0"
   },
   "peerDependenciesMeta": {
     "react": {
+      "optional": true
+    },
+    "styled-components": {
       "optional": true
     }
   },
@@ -61,6 +69,7 @@
     "jsdom": "^30.0.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "styled-components": "^6.5.3",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.0",
     "vitest": "^3.2.4"
