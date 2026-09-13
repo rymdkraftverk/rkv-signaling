@@ -15,7 +15,7 @@
     "qa": "npm test && npm run lint && npm run typecheck"
   },
   "dependencies": {
-    "protobufjs": "^6.8.8"
+    "protobufjs": "^8.8.0"
   },
   "description": "WebRTC signaling util for many-to-one communication",
   "repository": {
