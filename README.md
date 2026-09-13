@@ -14,6 +14,26 @@ The package is consumed straight from git, so pin a commit:
 npm install git+https://github.com/rymdkraftverk/rkv-signaling.git#<commit>
 ```
 
+### React
+
+Controllers share one join flow through a hook:
+
+```ts
+import { useJoin } from 'rkv-signaling/react'
+
+const { status, gameCode, setGameCode, notice, dismissNotice, join, fail, send } = useJoin({
+  wsAddress,
+  channelConfigs,
+  onData,
+})
+```
+
+It reads the code from `?code=` or the last session and connects on its own
+when the url carries one, keeps `status` at `lobby`, `connecting` or
+`connected`, raises a notice when the connection times out, closes or the
+code is unknown, and hands back `send(channel, data)` once the channels are
+open. `fail(message)` lets the game raise its own errors, such as a full game.
+
 ### Index
 
   - Getting started

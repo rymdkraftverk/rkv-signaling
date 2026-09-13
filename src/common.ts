@@ -12,12 +12,12 @@ export const WEB_RTC_CONFIG: RTCConfiguration = {
   ],
 }
 
-export interface Protobuf {
+export type Protobuf = {
   descriptor: pb.INamespace;
   schemaKey:  string;
 }
 
-export interface ChannelInfo {
+export type ChannelInfo = {
   name:      string;
   protobuf?: Protobuf;
 }

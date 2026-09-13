@@ -19,7 +19,7 @@ const InitatorState = {
   READY: 'ready',
 } as const
 
-interface Initiator {
+type Initiator = {
   alive:            boolean;
   id:               string;
   offer:            RTCSessionDescriptionInit;
@@ -28,14 +28,14 @@ interface Initiator {
   closeConnections: () => void;
 }
 
-export interface JoinedInitiator {
+export type JoinedInitiator = {
   id:        string;
   setOnData: (onData: (data: never) => unknown) => void;
   send:      ReturnType<typeof rtcMapSend>;
   close:     () => void;
 }
 
-export interface InitOptions {
+export type InitOptions = {
   wsAddress:        string;
   receiverId:       string;
   onInitiatorJoin:  (initiator: JoinedInitiator) => void;

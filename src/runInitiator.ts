@@ -20,13 +20,13 @@ let closeConnections = () => {}
 let id: string | null = null
 // end state
 
-export interface ChannelConfig {
+export type ChannelConfig = {
   name:      string;
   config?:   RTCDataChannelInit;
   protobuf?: Protobuf;
 }
 
-export interface InitOptions {
+export type InitOptions = {
   channelConfigs: ChannelConfig[];
   onClose:        (event: Event) => void;
   onData:         (data: never) => unknown;
