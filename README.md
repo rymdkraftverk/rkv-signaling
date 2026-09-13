@@ -6,6 +6,14 @@ It uses [WebRTC](https://webrtc.org/) and adds an abstraction on top of it which
 
 It can be used for games where one browser is the game screen while a mobile phone browser is the controller.
 
+### Install
+
+The package is consumed straight from git, so pin a commit:
+
+```
+npm install git+https://github.com/rymdkraftverk/rkv-signaling.git#<commit>
+```
+
 ### Index
 
   - Getting started
@@ -25,7 +33,7 @@ Usage of the `signaling` module is split into three parts:
 ### API
 
 ```js
-import signaling from 'signaling'
+import signaling from 'rkv-signaling'
 ```
 
 ---
