@@ -1,6 +1,7 @@
 import Event from './event'
 import {
   WEB_RTC_CONFIG,
+  candidatesGathered,
   makeCloseConnections,
   makeOnRtcMessage,
   mappify,
@@ -58,20 +59,11 @@ const onIceConnectionStateChange = (event: Event) => {
   }
 }
 
-const onIceCandidate = (allReceived: () => void) => (
-  { candidate }: RTCPeerConnectionIceEvent,
-) => {
-  if (candidate == null) {
-    console.log('[Ice Candidate] Last retrieved')
-    allReceived()
-    return
-  }
-  console.log('[Ice Candidate]')
-}
-
-const createOffer = (rtc: RTCPeerConnection) => async () => {
-  const offer = await rtc.createOffer()
-  await rtc.setLocalDescription(offer)
+const createOffer = (rtc: RTCPeerConnection, send: () => void) => async () => {
+  const gathered = candidatesGathered(rtc)
+  await rtc.setLocalDescription(await rtc.createOffer())
+  await gathered
+  send()
 }
 
 const onReceiverNotFound = (
@@ -140,12 +132,10 @@ const init = ({
     send: wsSend(ws),
   })
 
-  rtc.onicecandidate = onIceCandidate(thunkedSendOffer)
-
   // Monitor disconnects
   rtc.oniceconnectionstatechange = onIceConnectionStateChange
 
-  ws.onopen = createOffer(rtc)
+  ws.onopen = createOffer(rtc, thunkedSendOffer)
   ws.onmessage = message => onWsMessage<never>({
     [Event.ANSWER]: (answer: RTCSessionDescriptionInit) => {
       rtc.setRemoteDescription(answer)

@@ -12,6 +12,30 @@ export const WEB_RTC_CONFIG: RTCConfiguration = {
   ],
 }
 
+export const ICE_GATHERING_PATIENCE_MILLISECONDS = 2000
+
+export const candidatesGathered = (rtc: RTCPeerConnection) => {
+  const complete = new Promise<string>((resolve) => {
+    rtc.addEventListener('icegatheringstatechange', () => {
+      if (rtc.iceGatheringState === 'complete') resolve('complete')
+    })
+  })
+  const first = new Promise<void>((resolve) => {
+    rtc.addEventListener('icecandidate', ({ candidate }) => {
+      if (candidate) resolve()
+    })
+  })
+  const patience = new Promise<void>((resolve) => {
+    setTimeout(resolve, ICE_GATHERING_PATIENCE_MILLISECONDS)
+  })
+  const partial = Promise.all([first, patience])
+    .then(() => 'partial')
+  return Promise.race([complete, partial])
+    .then((outcome) => {
+      console.log(`[ICE gathering] ${outcome}`)
+    })
+}
+
 export type Protobuf = {
   descriptor: pb.INamespace;
   schemaKey:  string;

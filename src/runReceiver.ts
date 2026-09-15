@@ -1,6 +1,7 @@
 import Event from './event'
 import {
   WEB_RTC_CONFIG,
+  candidatesGathered,
   makeCloseConnections,
   makeOnRtcMessage,
   mappify,
@@ -92,23 +93,14 @@ const onIceConnectionStateChange = (initiatorId: string) => (event: Event) => {
   }
 }
 
-const onIceCandidate = (initiator: Initiator) => (
-  { candidate }: RTCPeerConnectionIceEvent,
-) => {
-  if (candidate) {
-    console.log(`[Ice candidate] ${prettyId(initiator.id)}`)
-    return
-  }
-
-  console.log(`[Sending answer] ${prettyId(initiator.id)} Last candidate retrieved`)
-  send(Event.ANSWER, { answer: initiator.rtc.localDescription, initiatorId: initiator.id })
-}
-
-const createAnswer = async (rtc: RTCPeerConnection, offer: RTCSessionDescriptionInit) => {
+const sendAnswer = async (initiator: Initiator) => {
+  const { rtc, offer } = initiator
   await rtc.setRemoteDescription(new RTCSessionDescription(offer))
-  const answer = await rtc.createAnswer()
-  await rtc.setLocalDescription(answer)
-  return answer
+  const gathered = candidatesGathered(rtc)
+  await rtc.setLocalDescription(await rtc.createAnswer())
+  await gathered
+  console.log(`[Sending answer] ${prettyId(initiator.id)}`)
+  send(Event.ANSWER, { answer: rtc.localDescription, initiatorId: initiator.id })
 }
 
 const setUpChannels = (
@@ -178,9 +170,6 @@ const onOffer = ({ initiatorId, channelInfos, offer }: {
   const initiator = createInitiator(initiatorId, offer)
   const { rtc } = initiator
 
-  // Start collecting receiver candidates to be sent to this initiator
-  rtc.onicecandidate = onIceCandidate(initiator)
-
   // Monitor disconnects
   rtc.oniceconnectionstatechange = onIceConnectionStateChange(initiatorId)
 
@@ -198,7 +187,7 @@ const onOffer = ({ initiatorId, channelInfos, offer }: {
       })
     })
 
-  createAnswer(rtc, offer)
+  sendAnswer(initiator)
 }
 
 const init = ({

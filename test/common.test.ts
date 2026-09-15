@@ -213,3 +213,68 @@ test('wsSend', () => {
     .toHaveBeenCalledWith('{"event":"foo","payload":"bar"}')
 })
 
+
+const fakeRtc = () => {
+  const target = new EventTarget() as EventTarget & { iceGatheringState: RTCIceGatheringState }
+  target.iceGatheringState = 'gathering'
+  const candidate = () => {
+    target.dispatchEvent(Object.assign(new Event('icecandidate'), { candidate: {} }))
+  }
+  const complete = () => {
+    target.iceGatheringState = 'complete'
+    target.dispatchEvent(new Event('icegatheringstatechange'))
+  }
+  return { rtc: target as unknown as RTCPeerConnection, candidate, complete }
+}
+
+const track = (promise: Promise<void>) => {
+  const state = { done: false }
+  promise.then(() => {
+    state.done = true
+  })
+  return state
+}
+
+const flush = () => vi.advanceTimersByTimeAsync(0)
+
+describe('candidatesGathered', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('resolves as soon as gathering completes', async () => {
+    const { rtc, complete } = fakeRtc()
+    const gathered = track(common.candidatesGathered(rtc))
+    complete()
+    await flush()
+    expect(gathered.done)
+      .toBe(true)
+  })
+
+  test('resolves once patience runs out with a candidate in hand', async () => {
+    const { rtc, candidate } = fakeRtc()
+    const gathered = track(common.candidatesGathered(rtc))
+    candidate()
+    await vi.advanceTimersByTimeAsync(common.ICE_GATHERING_PATIENCE_MILLISECONDS - 1)
+    expect(gathered.done)
+      .toBe(false)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(gathered.done)
+      .toBe(true)
+  })
+
+  test('keeps waiting past patience until a candidate arrives', async () => {
+    const { rtc, candidate } = fakeRtc()
+    const gathered = track(common.candidatesGathered(rtc))
+    await vi.advanceTimersByTimeAsync(common.ICE_GATHERING_PATIENCE_MILLISECONDS * 5)
+    expect(gathered.done)
+      .toBe(false)
+    candidate()
+    await flush()
+    expect(gathered.done)
+      .toBe(true)
+  })
+})
